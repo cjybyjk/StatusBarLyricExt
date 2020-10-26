@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StatusBarLyricExt</string>
+    <string name="about_header">关于</string>
+    <string name="preferences_header">设置</string>
+    <string name="profile_choose_app">选择应用</string>
+    <string name="dialog_delete_title">删除</string>
+    <string name="dialog_delete_message">移除所选项目？</string>
+    <string name="add_package_to_title">添加应用</string>
+    <string name="enabled_title">启用</string>
+    <string name="ignored_apps_title">忽略应用</string>
+</resources>

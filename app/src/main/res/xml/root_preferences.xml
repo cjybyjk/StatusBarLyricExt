@@ -1,0 +1,25 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/preferences_header">
+        <SwitchPreference
+            android:key="enabled"
+            android:title="@string/enabled_title" />
+        <io.cjybyjk.statuslyricext.preferences.PackageListPreference
+            android:title="@string/ignored_apps_title"
+            android:key="ignored_packages"
+            android:dependency="enabled" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/about_header"
+        android:key="about">
+
+        <Preference
+            android:key="app"
+            android:title="@string/app_name" />
+        <Preference
+            android:key="lyricview"
+            android:title="LyricView" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
