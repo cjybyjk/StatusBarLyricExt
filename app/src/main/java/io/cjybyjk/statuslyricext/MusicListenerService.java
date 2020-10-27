@@ -178,6 +178,8 @@ public class MusicListenerService extends NotificationListenerService {
         builder.setSmallIcon(R.drawable.ic_music);
         builder.setOngoing(true);
         Notification notification = builder.build();
+        notification.extras.putLong("ticker_icon", R.drawable.ic_music);
+        notification.extras.putBoolean("ticker_icon_switch", false);
         notification.flags |= Constants.FLAG_ALWAYS_SHOW_TICKER;
         notification.flags |= Constants.FLAG_ONLY_UPDATE_TICKER;
         return notification;
