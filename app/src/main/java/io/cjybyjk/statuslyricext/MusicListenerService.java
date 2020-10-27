@@ -66,7 +66,6 @@ public class MusicListenerService extends NotificationListenerService {
             super.handleMessage(msg);
             if (msg.what == MSG_LYRIC_UPDATE_DONE && msg.getData().getString("title", "").equals(requiredLrcTitle)) {
                 mLyric = (Lyric) msg.obj;
-                startLyric();
             }
         }
     };
@@ -104,7 +103,6 @@ public class MusicListenerService extends NotificationListenerService {
 
         @Override
         public void onMetadataChanged(@Nullable MediaMetadata metadata) {
-            stopLyric();
             mLyric = null;
             if (metadata == null) return;
             requiredLrcTitle = metadata.getString(MediaMetadata.METADATA_KEY_TITLE);
@@ -210,6 +208,7 @@ public class MusicListenerService extends NotificationListenerService {
     private void startLyric() {
         mLastSentenceFromTime = -1;
         mLyricNotification.tickerText = null;
+        mNotificationManager.notify(NOTIFICATION_ID_LRC, mLyricNotification);
         mHandler.post(mLyricUpdateRunnable);
     }
 
