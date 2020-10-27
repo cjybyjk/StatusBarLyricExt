@@ -21,6 +21,7 @@ import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
@@ -172,7 +173,7 @@ public class MusicListenerService extends NotificationListenerService {
     }
 
     private Notification buildLrcNotification() {
-        Notification.Builder builder = new Notification.Builder(this, Constants.NOTIFICATION_CHANNEL_LRC);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_LRC);
         builder.setSmallIcon(R.drawable.ic_music);
         builder.setOngoing(true);
         Notification notification = builder.build();
