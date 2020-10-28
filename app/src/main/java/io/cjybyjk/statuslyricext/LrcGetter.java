@@ -15,11 +15,13 @@ import cn.zhaiyifan.lyric.model.Lyric;
 import io.cjybyjk.statuslyricext.provider.ILrcProvider;
 import io.cjybyjk.statuslyricext.provider.KugouProvider;
 import io.cjybyjk.statuslyricext.provider.NeteaseProvider;
+import io.cjybyjk.statuslyricext.provider.QQMusicProvider;
 
 public class LrcGetter {
 
     private static final ILrcProvider[] providers = {
             new KugouProvider(),
+            new QQMusicProvider(),
             new NeteaseProvider()
     };
 
