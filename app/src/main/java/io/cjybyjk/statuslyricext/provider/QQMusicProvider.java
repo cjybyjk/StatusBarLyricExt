@@ -2,6 +2,7 @@ package io.cjybyjk.statuslyricext.provider;
 
 import android.media.MediaMetadata;
 import android.util.Base64;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +29,7 @@ public class QQMusicProvider implements ILrcProvider {
             searchResult = HttpRequestUtil.getJsonResponse(searchUrl, QM_REFERER);
             if (searchResult != null && searchResult.getLong("code") == 0) {
                 JSONArray array = searchResult.getJSONObject("data").getJSONObject("song").getJSONArray("list");
-                String lrcUrl = getLrcUrl(array);
+                String lrcUrl = getLrcUrl(array, data.getString(MediaMetadata.METADATA_KEY_TITLE));
                 JSONObject lrcJson = HttpRequestUtil.getJsonResponse(lrcUrl, QM_REFERER);
                 return new String(Base64.decode(lrcJson.getString("lyric").getBytes(), Base64.DEFAULT));
             }
@@ -39,8 +40,18 @@ public class QQMusicProvider implements ILrcProvider {
         return null;
     }
 
-    private static String getLrcUrl(JSONArray jsonArray) throws JSONException {
-        JSONObject jsonObject = jsonArray.getJSONObject(0);
-        return String.format(Locale.getDefault(), QM_LRC_URL_FORMAT, jsonObject.getString("songmid"));
+    private static String getLrcUrl(JSONArray jsonArray, String title) throws JSONException {
+        String currentMID = "";
+        long minDistance = title.length();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            String soundName = jsonObject.getString("songname");
+            long dis = LyricSearchUtil.levenshtein(soundName, title);
+            if (dis < minDistance) {
+                minDistance = dis;
+                currentMID = jsonObject.getString("songmid");
+            }
+        }
+        return String.format(Locale.getDefault(), QM_LRC_URL_FORMAT, currentMID);
     }
 }
