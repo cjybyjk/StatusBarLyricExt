@@ -67,6 +67,7 @@ public class MusicListenerService extends NotificationListenerService {
             super.handleMessage(msg);
             if (msg.what == MSG_LYRIC_UPDATE_DONE && msg.getData().getString("title", "").equals(requiredLrcTitle)) {
                 mLyric = (Lyric) msg.obj;
+                if (mLyric == null) stopLyric();
             }
         }
     };
@@ -214,7 +215,6 @@ public class MusicListenerService extends NotificationListenerService {
     }
 
     private void stopLyric() {
-        if (mLyric == null) return;
         mHandler.removeCallbacks(mLyricUpdateRunnable);
         mNotificationManager.cancel(NOTIFICATION_ID_LRC);
     }
