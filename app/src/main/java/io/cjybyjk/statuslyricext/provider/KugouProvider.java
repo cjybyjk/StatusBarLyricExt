@@ -1,13 +1,14 @@
 package io.cjybyjk.statuslyricext.provider;
 
 import android.media.MediaMetadata;
+import android.os.Build;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Base64;
+import android.util.Base64;
 
 import io.cjybyjk.statuslyricext.provider.utils.HttpRequestUtil;
 import io.cjybyjk.statuslyricext.provider.utils.LyricSearchUtil;
@@ -28,7 +29,7 @@ public class KugouProvider implements ILrcProvider {
                 JSONArray array = searchResult.getJSONArray("candidates");
                 String lrcUrl = getLrcUrl(array);
                 JSONObject lrcJson = HttpRequestUtil.getJsonResponse(lrcUrl);
-                return new String(Base64.getDecoder().decode(lrcJson.getString("content")));
+                return new String(Base64.decode(lrcJson.getString("content").getBytes(), Base64.DEFAULT));
             }
         } catch (JSONException e) {
             e.printStackTrace();

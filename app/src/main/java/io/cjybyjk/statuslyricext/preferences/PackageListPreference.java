@@ -106,7 +106,16 @@ public class PackageListPreference extends PreferenceCategory implements
     }
 
     private void savePackagesList() {
-        String packageListData = String.join(";", mPackages);
+        String packageListData = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            packageListData = String.join(";", mPackages);
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (String pkg : mPackages) {
+                sb.append(pkg + ";");
+            }
+            packageListData = sb.toString();
+        }
         persistString(packageListData);
         LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(new Intent(Constants.BROADCAST_IGNORED_APP_CHANGED));
     }
