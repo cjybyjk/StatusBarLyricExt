@@ -3,18 +3,61 @@ package io.cjybyjk.statuslyricext.provider.utils;
 import android.media.MediaMetadata;
 import android.text.TextUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.regex.Pattern;
+
 public class LyricSearchUtil {
+
+    private static final Pattern LyricContentPattern = Pattern.compile("(\\[\\d\\d:\\d\\d\\.\\d{0,3}]|\\[\\d\\d:\\d\\d])[^\\r\\n]");
+
     public static String getSearchKey(MediaMetadata metadata) {
         String title = metadata.getString(MediaMetadata.METADATA_KEY_TITLE);
         String album = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
         String artist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
+        String ret;
         if (!TextUtils.isEmpty(artist)) {
-            return artist + "-" + title;
+            ret = artist + "-" + title;
         } else if (!TextUtils.isEmpty(album)) {
-            return album + "-" + title;
+            ret = album + "-" + title;
         } else {
-            return title;
+            ret = title;
         }
+        try {
+            return URLEncoder.encode(ret, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return ret;
+        }
+    }
+
+    public static String parseArtists(JSONArray jsonArray, String key) {
+        try {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                stringBuilder.append(jsonArray.getJSONObject(i).getString(key));
+                if (i < jsonArray.length() - 1) stringBuilder.append('/');
+            }
+            return stringBuilder.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static long getMetadataDistance(MediaMetadata metadata, String title, String artist, String album) {
+        String realTitle = metadata.getString(MediaMetadata.METADATA_KEY_TITLE);
+        String realArtist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
+        String realAlbum = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
+        if (!realTitle.contains(title) && !title.contains(realTitle) || TextUtils.isEmpty(title)) {
+            return 10000;
+        }
+        long res = levenshtein(title, realTitle) * 100;
+        res += levenshtein(artist, realArtist) * 10;
+        res += levenshtein(album, realAlbum);
+        return res;
     }
 
     public static int levenshtein(CharSequence a, CharSequence b) {
@@ -44,4 +87,8 @@ public class LyricSearchUtil {
         return dp[lenA][lenB];
     }
 
+    public static boolean isLyricContent(String content) {
+        if (TextUtils.isEmpty(content)) return false;
+        return LyricContentPattern.matcher(content).find();
+    }
 }

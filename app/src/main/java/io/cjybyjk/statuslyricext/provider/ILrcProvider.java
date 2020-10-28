@@ -5,5 +5,10 @@ import android.media.MediaMetadata;
 import java.io.IOException;
 
 public interface ILrcProvider {
-    String getLyric(MediaMetadata data) throws IOException;
+    LyricResult getLyric(MediaMetadata data) throws IOException;
+
+    class LyricResult {
+        public String mLyric;
+        public long mDistance;
+    }
 }

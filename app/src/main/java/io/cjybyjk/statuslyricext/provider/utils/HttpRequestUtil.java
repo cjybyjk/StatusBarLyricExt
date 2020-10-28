@@ -44,7 +44,6 @@ public class HttpRequestUtil {
         return null;
     }
 
-
     public static byte[] readStream(InputStream inputStream) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];

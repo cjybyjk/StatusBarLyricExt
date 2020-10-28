@@ -1,7 +1,7 @@
 package io.cjybyjk.statuslyricext.provider;
 
 import android.media.MediaMetadata;
-import android.util.Log;
+import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,16 +21,19 @@ public class NeteaseProvider implements ILrcProvider {
     private static final String NETEASE_LRC_URL_FORMAT = NETEASE_BASE_URL + "song/lyric?os=pc&id=%d&lv=-1&kv=-1&tv=-1";
 
     @Override
-    public String getLyric(MediaMetadata data) throws IOException {
+    public LyricResult getLyric(MediaMetadata data) throws IOException {
         String searchUrl = String.format(NETEASE_SEARCH_URL_FORMAT, LyricSearchUtil.getSearchKey(data));
         JSONObject searchResult;
         try {
             searchResult = HttpRequestUtil.getJsonResponse(searchUrl);
             if (searchResult != null && searchResult.getLong("code") == 200) {
                 JSONArray array = searchResult.getJSONObject("result").getJSONArray("songs");
-                String lrcUrl = getLrcUrl(array, data.getString(MediaMetadata.METADATA_KEY_TITLE));
-                JSONObject lrcJson = HttpRequestUtil.getJsonResponse(lrcUrl);
-                return lrcJson.getJSONObject("lrc").getString("lyric");
+                Pair<String, Long> pair = getLrcUrl(array, data);
+                JSONObject lrcJson = HttpRequestUtil.getJsonResponse(pair.first);
+                LyricResult result = new LyricResult();
+                result.mLyric = lrcJson.getJSONObject("lrc").getString("lyric");
+                result.mDistance = pair.second;
+                return result;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -39,18 +42,20 @@ public class NeteaseProvider implements ILrcProvider {
         return null;
     }
 
-    private static String getLrcUrl(JSONArray jsonArray, String title) throws JSONException {
+    private static Pair<String, Long> getLrcUrl(JSONArray jsonArray, MediaMetadata mediaMetadata) throws JSONException {
         long currentID = -1;
-        long minDistance = title.length();
+        long minDistance = 10000;
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             String soundName = jsonObject.getString("name");
-            long dis = LyricSearchUtil.levenshtein(soundName, title);
+            String albumName = jsonObject.getJSONObject("album").getString("name");
+            JSONArray artists = jsonObject.getJSONArray("artists");
+            long dis = LyricSearchUtil.getMetadataDistance(mediaMetadata, soundName, LyricSearchUtil.parseArtists(artists, "name"), albumName);
             if (dis < minDistance) {
                 minDistance = dis;
                 currentID = jsonObject.getLong("id");
             }
         }
-        return String.format(Locale.getDefault(), NETEASE_LRC_URL_FORMAT, currentID);
+        return new Pair<>(String.format(Locale.getDefault(), NETEASE_LRC_URL_FORMAT, currentID), minDistance);
     }
 }

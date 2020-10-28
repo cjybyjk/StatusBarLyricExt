@@ -2,7 +2,6 @@ package io.cjybyjk.statuslyricext;
 
 import android.content.Context;
 import android.media.MediaMetadata;
-import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,6 +15,7 @@ import io.cjybyjk.statuslyricext.provider.ILrcProvider;
 import io.cjybyjk.statuslyricext.provider.KugouProvider;
 import io.cjybyjk.statuslyricext.provider.NeteaseProvider;
 import io.cjybyjk.statuslyricext.provider.QQMusicProvider;
+import io.cjybyjk.statuslyricext.provider.utils.LyricSearchUtil;
 
 public class LrcGetter {
 
@@ -44,15 +44,23 @@ public class LrcGetter {
         if (requireLrcPath.exists()) {
             return LyricUtils.parseLyric(requireLrcPath, "UTF-8");
         }
+        ILrcProvider.LyricResult currentResult = null;
         for (ILrcProvider provider : providers) {
             try {
-                String lrc = provider.getLyric(mediaMetadata);
-                if (!TextUtils.isEmpty(lrc)) {
-                    FileOutputStream lrcOut = new FileOutputStream(requireLrcPath);
-                    lrcOut.write(lrc.getBytes());
-                    lrcOut.close();
-                    return LyricUtils.parseLyric(requireLrcPath, "UTF-8");
+                ILrcProvider.LyricResult lyricResult = provider.getLyric(mediaMetadata);
+                if (lyricResult != null && LyricSearchUtil.isLyricContent(lyricResult.mLyric) && (currentResult == null || currentResult.mDistance > lyricResult.mDistance)) {
+                    currentResult = lyricResult;
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (currentResult != null && LyricSearchUtil.isLyricContent(currentResult.mLyric)) {
+            try {
+                FileOutputStream lrcOut = new FileOutputStream(requireLrcPath);
+                lrcOut.write(currentResult.mLyric.getBytes());
+                lrcOut.close();
+                return LyricUtils.parseLyric(requireLrcPath, "UTF-8");
             } catch (IOException e) {
                 e.printStackTrace();
             }
