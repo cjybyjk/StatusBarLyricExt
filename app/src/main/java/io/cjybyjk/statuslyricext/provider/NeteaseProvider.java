@@ -1,7 +1,6 @@
 package io.cjybyjk.statuslyricext.provider;
 
 import android.media.MediaMetadata;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,17 +9,18 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import io.cjybyjk.statuslyricext.provider.utils.HttpRequestUtil;
+import io.cjybyjk.statuslyricext.provider.utils.LyricSearchUtil;
 
 public class NeteaseProvider implements ILrcProvider {
 
     private static final String NETEASE_BASE_URL = "http://music.163.com/api/";
 
-    private static final String NETEASE_SEARCH_URL_FORMAT = NETEASE_BASE_URL + "search/pc?s=%s %s&type=1&offset=0&limit=1";
+    private static final String NETEASE_SEARCH_URL_FORMAT = NETEASE_BASE_URL + "search/pc?s=%s&type=1&offset=0&limit=1";
     private static final String NETEASE_LRC_URL_FORMAT = NETEASE_BASE_URL + "song/lyric?os=pc&id=%d&lv=-1&kv=-1&tv=-1";
 
     @Override
     public String getLyric(MediaMetadata data) throws IOException {
-        String searchUrl = String.format(NETEASE_SEARCH_URL_FORMAT, data.getString(MediaMetadata.METADATA_KEY_TITLE), data.getString(MediaMetadata.METADATA_KEY_ARTIST));
+        String searchUrl = String.format(NETEASE_SEARCH_URL_FORMAT, LyricSearchUtil.getSearchKey(data));
         JSONObject searchResult;
         try {
             searchResult = HttpRequestUtil.getJsonResponse(searchUrl);

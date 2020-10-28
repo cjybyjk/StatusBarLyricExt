@@ -22,8 +22,8 @@ import io.cjybyjk.statuslyricext.provider.NeteaseProvider;
 public class LrcGetter {
 
     private static final ILrcProvider[] providers = {
-            new NeteaseProvider(),
-            new KugouProvider()
+            new KugouProvider(),
+            new NeteaseProvider()
     };
 
     private static MessageDigest messageDigest;
