@@ -1,15 +1,11 @@
 package io.cjybyjk.statuslyricext.provider.utils;
 
-import android.util.JsonReader;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -43,7 +39,7 @@ public class HttpRequestUtil {
     public static byte[] readStream(InputStream inputStream) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
-        int len = 0;
+        int len;
         while ((len = inputStream.read(buffer)) != -1) {
             bout.write(buffer, 0, len);
         }

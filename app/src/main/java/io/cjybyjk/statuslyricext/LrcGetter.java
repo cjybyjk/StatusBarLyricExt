@@ -2,10 +2,7 @@ package io.cjybyjk.statuslyricext;
 
 import android.content.Context;
 import android.media.MediaMetadata;
-import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Base64;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,7 +56,7 @@ public class LrcGetter {
             }
         }
         return null;
-    };
+    }
 
     public static String printHexBinary(byte[] data) {
         StringBuilder r = new StringBuilder(data.length * 2);

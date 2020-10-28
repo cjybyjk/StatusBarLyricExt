@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import io.cjybyjk.statuslyricext.provider.utils.HttpRequestUtil;
 import io.cjybyjk.statuslyricext.provider.utils.LyricSearchUtil;
@@ -26,7 +27,7 @@ public class NeteaseProvider implements ILrcProvider {
             searchResult = HttpRequestUtil.getJsonResponse(searchUrl);
             if (searchResult != null && searchResult.getLong("code") == 200) {
                 JSONArray array = searchResult.getJSONObject("result").getJSONArray("songs");
-                String lrcUrl = getLrcUrl(array, data);
+                String lrcUrl = getLrcUrl(array);
                 JSONObject lrcJson = HttpRequestUtil.getJsonResponse(lrcUrl);
                 return lrcJson.getJSONObject("lrc").getString("lyric");
             }
@@ -37,10 +38,8 @@ public class NeteaseProvider implements ILrcProvider {
         return null;
     }
 
-    private static String getLrcUrl(JSONArray jsonArray, MediaMetadata data) throws JSONException {
-        String url = null;
-        String title = data.getString(MediaMetadata.METADATA_KEY_TITLE);
+    private static String getLrcUrl(JSONArray jsonArray) throws JSONException {
         JSONObject jsonObject = jsonArray.getJSONObject(0);
-        return String.format(NETEASE_LRC_URL_FORMAT, jsonObject.getLong("id"));
+        return String.format(Locale.getDefault(), NETEASE_LRC_URL_FORMAT, jsonObject.getLong("id"));
     }
 }

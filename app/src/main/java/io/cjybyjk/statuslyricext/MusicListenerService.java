@@ -50,7 +50,7 @@ public class MusicListenerService extends NotificationListenerService {
     private Notification mLyricNotification;
     private long mLastSentenceFromTime = -1;
 
-    private BroadcastReceiver mIgnoredPackageReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mIgnoredPackageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Constants.BROADCAST_IGNORED_APP_CHANGED)) {
@@ -72,7 +72,7 @@ public class MusicListenerService extends NotificationListenerService {
         }
     };
 
-    private Runnable mLyricUpdateRunnable = new Runnable() {
+    private final Runnable mLyricUpdateRunnable = new Runnable() {
         @Override
         public void run() {
             if (mMediaController == null || mMediaController.getPlaybackState().getState() != PlaybackState.STATE_PLAYING) {
@@ -156,7 +156,7 @@ public class MusicListenerService extends NotificationListenerService {
     @Override
     public void onListenerConnected() {
         super.onListenerConnected();
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);;
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mLyricNotification = buildLrcNotification();
         mMediaSessionManager = (MediaSessionManager) getSystemService(Context.MEDIA_SESSION_SERVICE);
@@ -232,9 +232,9 @@ public class MusicListenerService extends NotificationListenerService {
     }
 
     private static class LrcUpdateThread extends Thread {
-        private Handler handler;
-        private MediaMetadata data;
-        private Context context;
+        private final Handler handler;
+        private final MediaMetadata data;
+        private final Context context;
 
         public LrcUpdateThread(Context context, Handler handler, MediaMetadata data) {
             super();

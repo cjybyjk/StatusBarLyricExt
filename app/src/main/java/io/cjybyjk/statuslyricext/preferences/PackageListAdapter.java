@@ -41,8 +41,8 @@ import java.util.TreeSet;
 import io.cjybyjk.statuslyricext.R;
 
 public class PackageListAdapter extends BaseAdapter implements Runnable {
-    private PackageManager mPm;
-    private LayoutInflater mInflater;
+    private final PackageManager mPm;
+    private final LayoutInflater mInflater;
     private final List<PackageItem> mInstalledPackages = new LinkedList<PackageItem>();
 
     // Packages which don't have launcher icons, but which we want to show nevertheless
@@ -69,7 +69,7 @@ public class PackageListAdapter extends BaseAdapter implements Runnable {
     public static class PackageItem implements Comparable<PackageItem> {
         public final String packageName;
         public final CharSequence title;
-        private final TreeSet<CharSequence> activityTitles = new TreeSet<CharSequence>();
+        private final TreeSet<CharSequence> activityTitles = new TreeSet<>();
         public final Drawable icon;
 
         PackageItem(String packageName, CharSequence title, Drawable icon) {

@@ -1,13 +1,14 @@
 package io.cjybyjk.statuslyricext.provider;
 
 import android.media.MediaMetadata;
-import android.os.Build;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Locale;
+
 import android.util.Base64;
 
 import io.cjybyjk.statuslyricext.provider.utils.HttpRequestUtil;
@@ -21,7 +22,7 @@ public class KugouProvider implements ILrcProvider {
 
     @Override
     public String getLyric(MediaMetadata data) throws IOException {
-        String searchUrl = String.format(KUGOU_SEARCH_URL_FORMAT, LyricSearchUtil.getSearchKey(data), data.getLong(MediaMetadata.METADATA_KEY_DURATION));
+        String searchUrl = String.format(Locale.getDefault(), KUGOU_SEARCH_URL_FORMAT, LyricSearchUtil.getSearchKey(data), data.getLong(MediaMetadata.METADATA_KEY_DURATION));
         JSONObject searchResult;
         try {
             searchResult = HttpRequestUtil.getJsonResponse(searchUrl);
@@ -40,6 +41,6 @@ public class KugouProvider implements ILrcProvider {
 
     private static String getLrcUrl(JSONArray jsonArray) throws JSONException {
         JSONObject jsonObject = jsonArray.getJSONObject(0);
-        return String.format(KUGOU_LRC_URL_FORMAT, jsonObject.getLong("id"), jsonObject.getString("accesskey"));
+        return String.format(Locale.getDefault(), KUGOU_LRC_URL_FORMAT, jsonObject.getLong("id"), jsonObject.getString("accesskey"));
     }
 }
