@@ -51,11 +51,11 @@ public class LyricSearchUtil {
         String realTitle = metadata.getString(MediaMetadata.METADATA_KEY_TITLE);
         String realArtist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
         String realAlbum = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
-        if (!realTitle.equals(title)) {
-            return Integer.MAX_VALUE;
+        if (!realTitle.contains(title) && !title.contains(realTitle) || TextUtils.isEmpty(title)) {
+            return 10000;
         }
-        long res = 0;
-        res += levenshtein(artist, realArtist) * 100;
+        long res = levenshtein(title, realTitle) * 100;
+        res += levenshtein(artist, realArtist) * 10;
         res += levenshtein(album, realAlbum);
         return res;
     }
